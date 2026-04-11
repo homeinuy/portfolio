@@ -12,32 +12,139 @@ export async function getStaticPaths() {
 
 const { desarrollo } = Astro.props;
 const { Content } = await render(desarrollo);
+
+const allDesarrollos = await getCollection('desarrollos');
+const similares = allDesarrollos
+  .filter((d) => d.id !== desarrollo.id)
+  .slice(0, 3);
+
+const whatsappNumber = '59891066060';
+const whatsappMessage = encodeURIComponent(`Hola Agustín! Me interesa el proyecto ${desarrollo.data.title}. ¿Podrías darme más información?`);
+
+const amenityIcons: Record<string, string> = {
+  'Pileta': '🏊',
+  'Gimnasio': '🏋️',
+  'Parrillero': '🔥',
+  'Cowork': '💻',
+  'Rooftop': '🌅',
+  'Pet friendly': '🐾',
+  'Laundry': '🧺',
+  'Solarium': '☀️',
+  'Estacionamiento': '🅿️',
+  'Seguridad 24hs': '🔒',
+  'Salon de usos multiples': '🏠',
+  'Jardin': '🌿',
+  'Area infantil': '👶',
+  'Bicicletas': '🚲',
+  'Cargador electrico': '⚡',
+};
 ---
 
-<BaseLayout title={`${desarrollo.data.title} — Agust\u00edn D\u00edaz`} description={desarrollo.data.description}>
-  <article class="py-16 px-6">
-    <div class="max-w-3xl mx-auto">
-      <a href="/desarrollos/" class="text-sm text-gray-500 hover:text-gray-900 transition">
+<BaseLayout title={`${desarrollo.data.title} — Agustín Díaz`} description={desarrollo.data.description}>
+
+  {/* Hero con imagen de fondo */}
+  <section class="relative bg-gray-900 text-white">
+    {desarrollo.data.image ? (
+      <div class="absolute inset-0">
+        <img src={desarrollo.data.image} alt={desarrollo.data.title} class="w-full h-full object-cover opacity-40" />
+      </div>
+    ) : (
+      <div class="absolute inset-0 bg-gradient-to-br from-gray-800 to-gray-900"></div>
+    )}
+    <div class="relative max-w-5xl mx-auto px-6 py-20">
+      <a href="/desarrollos/" class="text-sm text-gray-300 hover:text-white transition">
         &larr; Volver a proyectos
       </a>
+      <h1 class="mt-6 font-serif text-5xl font-bold">{desarrollo.data.title}</h1>
+      <p class="mt-4 text-xl text-gray-200 max-w-2xl">{desarrollo.data.description}</p>
 
-      <h1 class="mt-6 font-serif text-4xl font-bold text-gray-900">{desarrollo.data.title}</h1>
-      <p class="mt-4 text-lg text-gray-600">{desarrollo.data.description}</p>
-
-      <div class="mt-4 flex flex-wrap gap-4 text-sm text-gray-500">
-        {desarrollo.data.location && (
-          <span>📍 {desarrollo.data.location}</span>
+      {/* Datos clave */}
+      <div class="mt-8 flex flex-wrap gap-6 text-sm">
+        {desarrollo.data.address && (
+          <div>
+            <span class="text-gray-400 block">Ubicacion</span>
+            <span class="font-medium">📍 {desarrollo.data.address}</span>
+          </div>
         )}
         {desarrollo.data.status && (
-          <span class="px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs font-medium">
-            {desarrollo.data.status}
-          </span>
+          <div>
+            <span class="text-gray-400 block">Estado</span>
+            <span class="inline-block px-3 py-1 bg-green-500/20 text-green-300 rounded-full text-xs font-medium">
+              {desarrollo.data.status}
+            </span>
+          </div>
+        )}
+        {desarrollo.data.deliveryDate && (
+          <div>
+            <span class="text-gray-400 block">Entrega estimada</span>
+            <span class="font-medium">{desarrollo.data.deliveryDate}</span>
+          </div>
+        )}
+        {desarrollo.data.developer && (
+          <div>
+            <span class="text-gray-400 block">Desarrollador</span>
+            <span class="font-medium">{desarrollo.data.developer}</span>
+          </div>
         )}
       </div>
+    </div>
+  </section>
 
-      {/* Video de YouTube */}
-      {desarrollo.data.youtubeId && (
-        <div class="mt-8 aspect-video rounded-lg overflow-hidden">
+  {/* Datos numéricos */}
+  {(desarrollo.data.floors || desarrollo.data.units || desarrollo.data.priceFrom) && (
+    <section class="bg-gray-50 border-b border-gray-100">
+      <div class="max-w-5xl mx-auto px-6 py-8 flex flex-wrap gap-8 justify-center text-center">
+        {desarrollo.data.floors && (
+          <div>
+            <span class="text-3xl font-bold text-gray-900">{desarrollo.data.floors}</span>
+            <span class="block text-sm text-gray-500 mt-1">Pisos</span>
+          </div>
+        )}
+        {desarrollo.data.units && (
+          <div>
+            <span class="text-3xl font-bold text-gray-900">{desarrollo.data.units}</span>
+            <span class="block text-sm text-gray-500 mt-1">Unidades</span>
+          </div>
+        )}
+        {desarrollo.data.priceFrom && (
+          <div>
+            <span class="text-sm text-gray-500">Desde</span>
+            <span class="block text-3xl font-bold text-gray-900">
+              {desarrollo.data.priceCurrency} {desarrollo.data.priceFrom.toLocaleString('es-UY')}
+            </span>
+          </div>
+        )}
+      </div>
+    </section>
+  )}
+
+  {/* Galería de imágenes */}
+  {desarrollo.data.gallery && desarrollo.data.gallery.length > 0 && (
+    <section class="py-12 px-6">
+      <div class="max-w-5xl mx-auto">
+        <h2 class="font-serif text-2xl font-bold text-gray-900 mb-6">Galeria</h2>
+        <div class="grid gap-3 grid-cols-2 md:grid-cols-3">
+          {desarrollo.data.gallery.map((img: string, i: number) => (
+            <img
+              src={img}
+              alt={`${desarrollo.data.title} - Imagen ${i + 1}`}
+              class:list={[
+                'w-full object-cover rounded-lg',
+                i === 0 ? 'col-span-2 h-72' : 'h-48',
+              ]}
+            />
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  {/* Video de YouTube */}
+  {desarrollo.data.youtubeId && (
+    <section class="py-12 px-6 bg-gray-50">
+      <div class="max-w-4xl mx-auto">
+        <h2 class="font-serif text-2xl font-bold text-gray-900 mb-6">Video del proyecto</h2>
+        <div class="aspect-video rounded-lg overflow-hidden shadow-lg">
           <iframe
             width="100%"
             height="100%"
@@ -49,23 +156,127 @@ const { Content } = await render(desarrollo);
             class="w-full h-full"
           ></iframe>
         </div>
-      )}
+      </div>
+    </section>
+  )}
 
-      <div class="mt-10 prose prose-gray max-w-none">
+  {/* Descripción del proyecto */}
+  <section class="py-12 px-6">
+    <div class="max-w-3xl mx-auto">
+      <h2 class="font-serif text-2xl font-bold text-gray-900 mb-6">Sobre el proyecto</h2>
+      <div class="prose prose-gray max-w-none prose-lg">
         <Content />
       </div>
+    </div>
+  </section>
 
-      {/* CTA de contacto */}
-      <div class="mt-12 p-8 bg-gray-50 rounded-lg text-center">
-        <h3 class="font-serif text-xl font-bold text-gray-900">¿Te interesa este proyecto?</h3>
-        <p class="mt-2 text-gray-600">Contactame para recibir mas informacion y asesoramiento personalizado.</p>
+  {/* Amenities */}
+  {desarrollo.data.amenities && desarrollo.data.amenities.length > 0 && (
+    <section class="py-12 px-6 bg-gray-50">
+      <div class="max-w-5xl mx-auto">
+        <h2 class="font-serif text-2xl font-bold text-gray-900 mb-6">Amenities</h2>
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+          {desarrollo.data.amenities.map((amenity: string) => (
+            <div class="flex items-center gap-3 bg-white rounded-lg p-4 border border-gray-100">
+              <span class="text-2xl">{amenityIcons[amenity] || '✨'}</span>
+              <span class="text-sm font-medium text-gray-700">{amenity}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  {/* Mapa de ubicación */}
+  {desarrollo.data.lat && desarrollo.data.lng && (
+    <section class="py-12 px-6">
+      <div class="max-w-5xl mx-auto">
+        <h2 class="font-serif text-2xl font-bold text-gray-900 mb-6">Ubicacion</h2>
+        <div id="project-map" class="w-full h-[400px] rounded-lg border border-gray-200 shadow-sm"></div>
+      </div>
+    </section>
+  )}
+
+  {/* CTA de contacto + WhatsApp */}
+  <section class="py-16 px-6 bg-gray-900 text-white">
+    <div class="max-w-3xl mx-auto text-center">
+      <h2 class="font-serif text-3xl font-bold">¿Te interesa {desarrollo.data.title}?</h2>
+      <p class="mt-4 text-gray-300 text-lg">
+        Contactame para recibir mas informacion, precios actualizados y disponibilidad de unidades.
+      </p>
+      <div class="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
+        <a
+          href={`https://wa.me/${whatsappNumber}?text=${whatsappMessage}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center justify-center gap-2 px-8 py-4 bg-green-600 text-white font-medium rounded-lg hover:bg-green-500 transition text-lg"
+        >
+          <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          Consultar por WhatsApp
+        </a>
         <a
           href="/contact/"
-          class="mt-4 inline-block px-6 py-3 bg-gray-900 text-white text-sm font-medium rounded-lg hover:bg-gray-700 transition"
+          class="inline-flex items-center justify-center px-8 py-4 border-2 border-white text-white font-medium rounded-lg hover:bg-white hover:text-gray-900 transition text-lg"
         >
-          Consultar sobre este proyecto
+          Enviar mensaje
         </a>
       </div>
     </div>
-  </article>
+  </section>
+
+  {/* Proyectos similares */}
+  {similares.length > 0 && (
+    <section class="py-16 px-6">
+      <div class="max-w-5xl mx-auto">
+        <h2 class="font-serif text-2xl font-bold text-gray-900 mb-8">Otros proyectos</h2>
+        <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {similares.map((d) => (
+            <a href={`/desarrollos/${d.id}/`} class="group block border border-gray-100 rounded-lg overflow-hidden hover:border-gray-300 transition">
+              {d.data.image && (
+                <img src={d.data.image} alt={d.data.title} class="w-full h-40 object-cover" />
+              )}
+              <div class="p-5">
+                {d.data.status && (
+                  <span class="text-xs px-2 py-1 bg-green-100 text-green-700 rounded-full font-medium">
+                    {d.data.status}
+                  </span>
+                )}
+                <h3 class="mt-2 font-serif text-lg font-semibold text-gray-900 group-hover:text-gray-600 transition">
+                  {d.data.title}
+                </h3>
+                {d.data.location && (
+                  <p class="mt-1 text-xs text-gray-400">📍 {d.data.location}</p>
+                )}
+                {d.data.priceFrom && (
+                  <p class="mt-2 text-sm font-semibold text-gray-900">
+                    Desde {d.data.priceCurrency} {d.data.priceFrom.toLocaleString('es-UY')}
+                  </p>
+                )}
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  {/* Leaflet para mapa de ubicación */}
+  {desarrollo.data.lat && desarrollo.data.lng && (
+    <>
+      <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+      <script is:inline src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+      <script is:inline define:vars={{ lat: desarrollo.data.lat, lng: desarrollo.data.lng, title: desarrollo.data.title }}>
+        document.addEventListener('DOMContentLoaded', function () {
+          var mapEl = document.getElementById('project-map');
+          if (!mapEl) return;
+          var map = L.map('project-map').setView([lat, lng], 15);
+          L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+            maxZoom: 19,
+          }).addTo(map);
+          L.marker([lat, lng]).addTo(map).bindPopup('<strong>' + title + '</strong>').openPopup();
+        });
+      </script>
+    </>
+  )}
 </BaseLayout>

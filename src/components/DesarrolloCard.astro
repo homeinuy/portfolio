@@ -6,15 +6,21 @@ interface Props {
   image?: string;
   location?: string;
   status?: string;
+  priceFrom?: number;
+  priceCurrency?: string;
 }
 
-const { title, description, slug, image, location, status } = Astro.props;
+const { title, description, slug, image, location, status, priceFrom, priceCurrency = 'USD' } = Astro.props;
 ---
 
 <a href={`/desarrollos/${slug}/`} class="group block">
   <article class="border border-gray-100 rounded-lg overflow-hidden hover:border-gray-300 transition">
-    {image && (
+    {image ? (
       <img src={image} alt={title} class="w-full h-48 object-cover" />
+    ) : (
+      <div class="w-full h-48 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
+        <span class="text-4xl">🏗️</span>
+      </div>
     )}
     <div class="p-6">
       {status && (
@@ -26,11 +32,16 @@ const { title, description, slug, image, location, status } = Astro.props;
         {title}
       </h3>
       <p class="mt-2 text-sm text-gray-600 leading-relaxed">{description}</p>
-      {location && (
-        <p class="mt-3 text-xs text-gray-400">
-          📍 {location}
-        </p>
-      )}
+      <div class="mt-3 flex items-center justify-between">
+        {location && (
+          <p class="text-xs text-gray-400">📍 {location}</p>
+        )}
+        {priceFrom && (
+          <p class="text-sm font-semibold text-gray-900">
+            Desde {priceCurrency} {priceFrom.toLocaleString('es-UY')}
+          </p>
+        )}
+      </div>
     </div>
   </article>
 </a>

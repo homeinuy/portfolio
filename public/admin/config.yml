@@ -30,11 +30,44 @@ collections:
       - { label: "Descripcion corta", name: "description", widget: "string" }
       - { label: "Fecha", name: "date", widget: "datetime" }
       - { label: "Imagen principal", name: "image", widget: "image", required: false }
-      - { label: "Ubicacion", name: "location", widget: "string", required: false, hint: "Ej: Punta del Este, Uruguay" }
+      - label: "Galeria de imagenes"
+        name: "gallery"
+        widget: "list"
+        required: false
+        field: { label: "Imagen", name: "image", widget: "image" }
+      - { label: "Ciudad / Zona", name: "location", widget: "string", required: false, hint: "Ej: Punta del Este, Uruguay" }
+      - { label: "Direccion", name: "address", widget: "string", required: false, hint: "Ej: Av. Roosevelt y Parada 7" }
       - { label: "Estado", name: "status", widget: "select", required: false, options: ["En pozo", "En construccion", "Terminado", "Entrega inmediata"], default: "En construccion" }
+      - { label: "Fecha de entrega", name: "deliveryDate", widget: "string", required: false, hint: "Ej: Diciembre 2027" }
+      - { label: "Desarrollador", name: "developer", widget: "string", required: false }
+      - { label: "Cantidad de pisos", name: "floors", widget: "number", required: false, value_type: "int" }
+      - { label: "Cantidad de unidades", name: "units", widget: "number", required: false, value_type: "int" }
+      - { label: "Precio desde (numero)", name: "priceFrom", widget: "number", required: false, value_type: "int", hint: "Solo el numero, sin puntos ni comas. Ej: 145000" }
+      - { label: "Moneda", name: "priceCurrency", widget: "select", required: false, options: ["USD", "UYU"], default: "USD" }
+      - label: "Amenities"
+        name: "amenities"
+        widget: "select"
+        multiple: true
+        required: false
+        options:
+          - "Pileta"
+          - "Gimnasio"
+          - "Parrillero"
+          - "Cowork"
+          - "Rooftop"
+          - "Pet friendly"
+          - "Laundry"
+          - "Solarium"
+          - "Estacionamiento"
+          - "Seguridad 24hs"
+          - "Salon de usos multiples"
+          - "Jardin"
+          - "Area infantil"
+          - "Bicicletas"
+          - "Cargador electrico"
       - { label: "YouTube Video ID", name: "youtubeId", widget: "string", required: false, hint: "Solo el ID del video. Ej: si la URL es youtube.com/watch?v=abc123, pone abc123" }
-      - { label: "Latitud", name: "lat", widget: "number", required: false, value_type: "float", hint: "Ej: -34.9467 (usa Google Maps para obtenerla)" }
-      - { label: "Longitud", name: "lng", widget: "number", required: false, value_type: "float", hint: "Ej: -54.9358 (usa Google Maps para obtenerla)" }
+      - { label: "Latitud", name: "lat", widget: "number", required: false, value_type: "float", hint: "Ej: -34.9467 (click derecho en Google Maps para copiar coordenadas)" }
+      - { label: "Longitud", name: "lng", widget: "number", required: false, value_type: "float", hint: "Ej: -54.9358" }
       - { label: "Destacado en inicio", name: "featured", widget: "boolean", default: false }
       - { label: "Contenido", name: "body", widget: "markdown" }
 
