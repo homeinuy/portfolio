@@ -3,18 +3,26 @@ const year = new Date().getFullYear();
 ---
 
 <footer class="border-t border-gray-100 mt-auto">
-  <div class="max-w-5xl mx-auto px-6 py-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-gray-500">
-    <p>&copy; {year} Agust&iacute;n D&iacute;az. Todos los derechos reservados.</p>
-    <div class="flex gap-4">
-      <a href="https://github.com" target="_blank" rel="noopener noreferrer" class="hover:text-gray-900 transition">
-        GitHub
-      </a>
-      <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" class="hover:text-gray-900 transition">
-        LinkedIn
-      </a>
-      <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" class="hover:text-gray-900 transition">
-        Twitter
-      </a>
+  <div class="max-w-5xl mx-auto px-6 py-10">
+    <div class="flex flex-col sm:flex-row items-center justify-between gap-6">
+      <div class="flex flex-col items-center sm:items-start gap-3">
+        <img src="/images/firma-agustin.png" alt="Agustín Díaz" class="h-12" />
+        <img src="/images/homein-dark.png" alt="Homein" class="h-6" />
+      </div>
+      <div class="flex gap-4 text-sm text-gray-500">
+        <a href="https://github.com" target="_blank" rel="noopener noreferrer" class="hover:text-gray-900 transition">
+          GitHub
+        </a>
+        <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" class="hover:text-gray-900 transition">
+          LinkedIn
+        </a>
+        <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" class="hover:text-gray-900 transition">
+          Twitter
+        </a>
+      </div>
     </div>
+    <p class="mt-6 text-center text-xs text-gray-400">
+      &copy; {year} Agust&iacute;n D&iacute;az — Homein. Todos los derechos reservados.
+    </p>
   </div>
 </footer>
