@@ -1,0 +1,36 @@
+---
+interface Props {
+  title: string;
+  description: string;
+  slug: string;
+  image?: string;
+  location?: string;
+  status?: string;
+}
+
+const { title, description, slug, image, location, status } = Astro.props;
+---
+
+<a href={`/desarrollos/${slug}/`} class="group block">
+  <article class="border border-gray-100 rounded-lg overflow-hidden hover:border-gray-300 transition">
+    {image && (
+      <img src={image} alt={title} class="w-full h-48 object-cover" />
+    )}
+    <div class="p-6">
+      {status && (
+        <span class="text-xs px-2 py-1 bg-green-100 text-green-700 rounded-full font-medium">
+          {status}
+        </span>
+      )}
+      <h3 class="mt-2 font-serif text-lg font-semibold text-gray-900 group-hover:text-gray-600 transition">
+        {title}
+      </h3>
+      <p class="mt-2 text-sm text-gray-600 leading-relaxed">{description}</p>
+      {location && (
+        <p class="mt-3 text-xs text-gray-400">
+          📍 {location}
+        </p>
+      )}
+    </div>
+  </article>
+</a>

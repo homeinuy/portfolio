@@ -1,12 +1,19 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ProjectCard from '../components/ProjectCard.astro';
+import DesarrolloCard from '../components/DesarrolloCard.astro';
 import BlogPostCard from '../components/BlogPostCard.astro';
 import { getCollection } from 'astro:content';
 
 const allProjects = await getCollection('projects');
 const featuredProjects = allProjects
   .filter((p) => p.data.featured)
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
+  .slice(0, 3);
+
+const allDesarrollos = await getCollection('desarrollos');
+const featuredDesarrollos = allDesarrollos
+  .filter((d) => d.data.featured)
   .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
   .slice(0, 3);
 
@@ -62,6 +69,32 @@ const recentPosts = allPosts
               slug={project.id}
               image={project.data.image}
               tech={project.data.tech}
+            />
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <!-- Proyectos inmobiliarios -->
+  {featuredDesarrollos.length > 0 && (
+    <section class="py-16 px-6">
+      <div class="max-w-5xl mx-auto">
+        <div class="flex items-center justify-between mb-8">
+          <h2 class="font-serif text-2xl font-bold text-gray-900">Proyectos inmobiliarios</h2>
+          <a href="/desarrollos/" class="text-sm text-gray-500 hover:text-gray-900 transition">
+            Ver todos &rarr;
+          </a>
+        </div>
+        <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {featuredDesarrollos.map((d) => (
+            <DesarrolloCard
+              title={d.data.title}
+              description={d.data.description}
+              slug={d.id}
+              image={d.data.image}
+              location={d.data.location}
+              status={d.data.status}
             />
           ))}
         </div>

@@ -20,8 +20,24 @@ collections:
       - { label: "Draft", name: "draft", widget: "boolean", default: false }
       - { label: "Body", name: "body", widget: "markdown" }
 
+  - name: "desarrollos"
+    label: "Proyectos Inmobiliarios"
+    folder: "src/content/desarrollos"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - { label: "Nombre del proyecto", name: "title", widget: "string" }
+      - { label: "Descripcion corta", name: "description", widget: "string" }
+      - { label: "Fecha", name: "date", widget: "datetime" }
+      - { label: "Imagen principal", name: "image", widget: "image", required: false }
+      - { label: "Ubicacion", name: "location", widget: "string", required: false, hint: "Ej: Punta del Este, Uruguay" }
+      - { label: "Estado", name: "status", widget: "select", required: false, options: ["En pozo", "En construccion", "Terminado", "Entrega inmediata"], default: "En construccion" }
+      - { label: "YouTube Video ID", name: "youtubeId", widget: "string", required: false, hint: "Solo el ID del video. Ej: si la URL es youtube.com/watch?v=abc123, pone abc123" }
+      - { label: "Destacado en inicio", name: "featured", widget: "boolean", default: false }
+      - { label: "Contenido", name: "body", widget: "markdown" }
+
   - name: "projects"
-    label: "Projects"
+    label: "Servicios"
     folder: "src/content/projects"
     create: true
     slug: "{{slug}}"

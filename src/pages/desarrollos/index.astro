@@ -1,0 +1,31 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import DesarrolloCard from '../../components/DesarrolloCard.astro';
+import { getCollection } from 'astro:content';
+
+const desarrollos = (await getCollection('desarrollos'))
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+---
+
+<BaseLayout title="Proyectos Inmobiliarios — Agust&iacute;n D&iacute;az" description="Proyectos inmobiliarios con oportunidades de inversi&oacute;n">
+  <section class="py-16 px-6">
+    <div class="max-w-5xl mx-auto">
+      <h1 class="font-serif text-4xl font-bold text-gray-900">Proyectos Inmobiliarios</h1>
+      <p class="mt-4 text-lg text-gray-600">
+        Conoce los desarrollos en los que estoy trabajando y las oportunidades de inversion disponibles.
+      </p>
+      <div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {desarrollos.map((d) => (
+          <DesarrolloCard
+            title={d.data.title}
+            description={d.data.description}
+            slug={d.id}
+            image={d.data.image}
+            location={d.data.location}
+            status={d.data.status}
+          />
+        ))}
+      </div>
+    </div>
+  </section>
+</BaseLayout>

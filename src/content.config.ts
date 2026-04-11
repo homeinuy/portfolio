@@ -27,4 +27,18 @@ const projects = defineCollection({
   }),
 });
 
-export const collections = { blog, projects };
+const desarrollos = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/desarrollos' }),
+  schema: z.object({
+    title: z.string(),
+    description: z.string(),
+    date: z.coerce.date(),
+    image: z.string().optional(),
+    location: z.string().optional(),
+    status: z.string().optional(),
+    youtubeId: z.string().optional(),
+    featured: z.boolean().default(false),
+  }),
+});
+
+export const collections = { blog, projects, desarrollos };
