@@ -37,6 +37,8 @@ const desarrollos = defineCollection({
     location: z.string().optional(),
     status: z.string().optional(),
     youtubeId: z.string().optional(),
+    lat: z.number().optional(),
+    lng: z.number().optional(),
     featured: z.boolean().default(false),
   }),
 });

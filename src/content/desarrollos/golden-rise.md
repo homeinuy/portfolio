@@ -5,6 +5,8 @@ date: 2026-04-11
 location: "Punta del Este, Uruguay"
 status: "En construccion"
 youtubeId: "dQw4w9WgXcQ"
+lat: -34.9467
+lng: -54.9358
 featured: true
 ---
 

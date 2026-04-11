@@ -33,6 +33,8 @@ collections:
       - { label: "Ubicacion", name: "location", widget: "string", required: false, hint: "Ej: Punta del Este, Uruguay" }
       - { label: "Estado", name: "status", widget: "select", required: false, options: ["En pozo", "En construccion", "Terminado", "Entrega inmediata"], default: "En construccion" }
       - { label: "YouTube Video ID", name: "youtubeId", widget: "string", required: false, hint: "Solo el ID del video. Ej: si la URL es youtube.com/watch?v=abc123, pone abc123" }
+      - { label: "Latitud", name: "lat", widget: "number", required: false, value_type: "float", hint: "Ej: -34.9467 (usa Google Maps para obtenerla)" }
+      - { label: "Longitud", name: "lng", widget: "number", required: false, value_type: "float", hint: "Ej: -54.9358 (usa Google Maps para obtenerla)" }
       - { label: "Destacado en inicio", name: "featured", widget: "boolean", default: false }
       - { label: "Contenido", name: "body", widget: "markdown" }
 
