@@ -1,0 +1,47 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog', ({ data }) => !data.draft);
+  return posts.map((post) => ({
+    params: { slug: post.id },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+
+const formattedDate = post.data.date.toLocaleDateString('es-ES', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+---
+
+<BaseLayout title={`${post.data.title} — Mi Blog`} description={post.data.description}>
+  <article class="py-16 px-6">
+    <div class="max-w-3xl mx-auto">
+      <a href="/blog/" class="text-sm text-gray-500 hover:text-gray-900 transition">
+        &larr; Volver al blog
+      </a>
+
+      <time class="mt-6 block text-sm text-gray-400 uppercase tracking-wide">{formattedDate}</time>
+      <h1 class="mt-2 font-serif text-4xl font-bold text-gray-900">{post.data.title}</h1>
+      <p class="mt-4 text-lg text-gray-600">{post.data.description}</p>
+
+      {post.data.tags && post.data.tags.length > 0 && (
+        <div class="mt-4 flex flex-wrap gap-2">
+          {post.data.tags.map((tag: string) => (
+            <span class="text-xs px-2 py-0.5 bg-gray-100 text-gray-500 rounded">{tag}</span>
+          ))}
+        </div>
+      )}
+
+      <div class="mt-10 prose prose-gray max-w-none">
+        <Content />
+      </div>
+    </div>
+  </article>
+</BaseLayout>
