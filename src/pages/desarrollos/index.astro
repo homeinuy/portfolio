@@ -1,33 +1,322 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import DesarrolloCard from '../../components/DesarrolloCard.astro';
 import { getCollection } from 'astro:content';
 
 const desarrollos = (await getCollection('desarrollos'))
   .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+
+const proyectosConUbicacion = desarrollos
+  .filter((d) => d.data.lat && d.data.lng)
+  .map((d) => ({
+    title: d.data.title,
+    description: d.data.description,
+    location: d.data.location || '',
+    status: d.data.status || '',
+    lat: d.data.lat,
+    lng: d.data.lng,
+    slug: d.id,
+    image: d.data.image || '',
+  }));
+
+const locations = [...new Set(desarrollos.map(d => d.data.location).filter(Boolean))];
+const statuses = [...new Set(desarrollos.map(d => d.data.status).filter(Boolean))];
 ---
 
-<BaseLayout title="Proyectos Inmobiliarios — Agust&iacute;n D&iacute;az" description="Proyectos inmobiliarios con oportunidades de inversi&oacute;n">
-  <section class="py-16 px-6">
-    <div class="max-w-5xl mx-auto">
-      <h1 class="font-serif text-4xl font-bold text-gray-900">Proyectos Inmobiliarios</h1>
-      <p class="mt-4 text-lg text-gray-600">
-        Conoce los desarrollos en los que estoy trabajando y las oportunidades de inversion disponibles.
+<BaseLayout title="Proyectos Inmobiliarios — Agust&iacute;n D&iacute;az" description="Descubr&iacute; los mejores desarrollos inmobiliarios para invertir">
+
+  <!-- Hero -->
+  <section class="bg-gray-900 text-white">
+    <div class="max-w-5xl mx-auto px-6 py-20 text-center">
+      <h1 class="font-serif text-5xl md:text-6xl font-bold">Emprendimientos</h1>
+      <p class="mt-4 text-xl text-gray-300 max-w-2xl mx-auto">
+        Invertí y viví en las mejores zonas. Descubrí desarrollos a tu medida.
       </p>
-      <div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {desarrollos.map((d) => (
-          <DesarrolloCard
-            title={d.data.title}
-            description={d.data.description}
-            slug={d.id}
-            image={d.data.image}
-            location={d.data.location}
-            status={d.data.status}
-            priceFrom={d.data.priceFrom}
-            priceCurrency={d.data.priceCurrency}
-          />
-        ))}
+      <div class="mt-6 flex items-center justify-center">
+        <svg class="w-6 h-6 text-gray-400 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
+        </svg>
       </div>
     </div>
   </section>
+
+  <!-- Mapa integrado -->
+  {proyectosConUbicacion.length > 0 && (
+    <section class="bg-gray-50 border-b border-gray-200">
+      <div id="map" class="w-full h-[450px]"></div>
+    </section>
+  )}
+
+  <!-- Filtros -->
+  <section class="bg-white border-b border-gray-100 sticky top-0 z-20">
+    <div class="max-w-6xl mx-auto px-6 py-4 flex flex-wrap items-center gap-4">
+      <span class="text-sm font-medium text-gray-500">Filtrar:</span>
+      <select id="filter-location" class="text-sm border border-gray-200 rounded-lg px-3 py-2 text-gray-700 bg-white focus:ring-2 focus:ring-gray-900 focus:border-transparent">
+        <option value="">Todas las ubicaciones</option>
+        {locations.map(loc => (
+          <option value={loc}>{loc}</option>
+        ))}
+      </select>
+      <select id="filter-status" class="text-sm border border-gray-200 rounded-lg px-3 py-2 text-gray-700 bg-white focus:ring-2 focus:ring-gray-900 focus:border-transparent">
+        <option value="">Todos los estados</option>
+        {statuses.map(st => (
+          <option value={st}>{st}</option>
+        ))}
+      </select>
+      <span id="results-count" class="ml-auto text-sm text-gray-400"></span>
+    </div>
+  </section>
+
+  <!-- Grid de proyectos -->
+  <section class="py-12 px-6">
+    <div class="max-w-6xl mx-auto">
+      <div id="projects-grid" class="grid gap-8 md:grid-cols-2">
+        {desarrollos.map((d) => (
+          <a
+            href={`/desarrollos/${d.id}/`}
+            class="project-card group block rounded-2xl overflow-hidden bg-white border border-gray-100 hover:shadow-xl transition-shadow duration-300"
+            data-location={d.data.location || ''}
+            data-status={d.data.status || ''}
+          >
+            {/* Imagen grande */}
+            {d.data.image ? (
+              <div class="relative overflow-hidden">
+                <img
+                  src={d.data.image}
+                  alt={d.data.title}
+                  class="w-full h-72 md:h-80 object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+                {d.data.status && (
+                  <span class="absolute top-4 left-4 text-xs px-3 py-1.5 bg-white/90 backdrop-blur text-gray-900 rounded-full font-semibold shadow-sm">
+                    {d.data.status}
+                  </span>
+                )}
+              </div>
+            ) : (
+              <div class="w-full h-72 md:h-80 bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center relative">
+                <span class="text-6xl opacity-30">🏗️</span>
+                {d.data.status && (
+                  <span class="absolute top-4 left-4 text-xs px-3 py-1.5 bg-white/90 backdrop-blur text-gray-900 rounded-full font-semibold shadow-sm">
+                    {d.data.status}
+                  </span>
+                )}
+              </div>
+            )}
+
+            {/* Info del proyecto */}
+            <div class="p-6 md:p-8">
+              <h2 class="font-serif text-2xl md:text-3xl font-bold text-gray-900 group-hover:text-gray-600 transition">
+                {d.data.title}
+              </h2>
+
+              <div class="mt-4 space-y-2">
+                {d.data.address && (
+                  <div class="flex items-start gap-2 text-sm text-gray-600">
+                    <span class="text-gray-400 mt-0.5">📍</span>
+                    <div>
+                      <span class="text-gray-400 text-xs block">Dirección</span>
+                      {d.data.address}
+                    </div>
+                  </div>
+                )}
+
+                {d.data.deliveryDate && (
+                  <div class="flex items-start gap-2 text-sm text-gray-600">
+                    <span class="text-gray-400 mt-0.5">📅</span>
+                    <div>
+                      <span class="text-gray-400 text-xs block">Fecha de entrega</span>
+                      {d.data.deliveryDate}
+                    </div>
+                  </div>
+                )}
+
+                {d.data.developer && (
+                  <div class="flex items-start gap-2 text-sm text-gray-600">
+                    <span class="text-gray-400 mt-0.5">🏢</span>
+                    <div>
+                      <span class="text-gray-400 text-xs block">Desarrollador</span>
+                      {d.data.developer}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Datos numéricos */}
+              <div class="mt-5 flex flex-wrap items-center gap-4">
+                {d.data.units && (
+                  <span class="text-sm text-gray-500">
+                    <strong class="text-gray-900">{d.data.units}</strong> unidades
+                  </span>
+                )}
+                {d.data.floors && (
+                  <span class="text-sm text-gray-500">
+                    <strong class="text-gray-900">{d.data.floors}</strong> pisos
+                  </span>
+                )}
+                {d.data.priceFrom && (
+                  <span class="ml-auto text-lg font-bold text-gray-900">
+                    Desde {d.data.priceCurrency} {d.data.priceFrom.toLocaleString('es-UY')}
+                  </span>
+                )}
+              </div>
+
+              {/* Amenities preview */}
+              {d.data.amenities && d.data.amenities.length > 0 && (
+                <div class="mt-4 flex flex-wrap gap-2">
+                  {d.data.amenities.slice(0, 5).map((amenity: string) => (
+                    <span class="text-xs px-2 py-1 bg-gray-100 text-gray-600 rounded-md">
+                      {amenity}
+                    </span>
+                  ))}
+                  {d.data.amenities.length > 5 && (
+                    <span class="text-xs px-2 py-1 bg-gray-100 text-gray-500 rounded-md">
+                      +{d.data.amenities.length - 5} más
+                    </span>
+                  )}
+                </div>
+              )}
+
+              <div class="mt-5 text-sm font-medium text-gray-900 group-hover:underline">
+                Ver proyecto →
+              </div>
+            </div>
+          </a>
+        ))}
+      </div>
+
+      {/* Mensaje cuando no hay resultados */}
+      <div id="no-results" class="hidden py-16 text-center">
+        <p class="text-lg text-gray-500">No se encontraron proyectos con esos filtros.</p>
+        <button id="clear-filters" class="mt-4 text-sm font-medium text-gray-900 underline hover:text-gray-600 transition">
+          Limpiar filtros
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="py-16 px-6 bg-gray-900 text-white">
+    <div class="max-w-3xl mx-auto text-center">
+      <img src="/images/homein.png" alt="Homein" class="h-8 mx-auto mb-6" />
+      <h2 class="font-serif text-3xl font-bold">¿Te interesa algún proyecto?</h2>
+      <p class="mt-4 text-gray-300 text-lg">
+        Contactame para recibir más información, precios actualizados y disponibilidad de unidades.
+      </p>
+      <div class="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
+        <a
+          href="https://wa.me/59891066060?text=Hola%20Agust%C3%ADn!%20Vi%20los%20proyectos%20en%20tu%20web%20y%20me%20interesa%20recibir%20m%C3%A1s%20informaci%C3%B3n."
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center justify-center gap-2 px-8 py-4 bg-green-600 text-white font-medium rounded-lg hover:bg-green-500 transition text-lg"
+        >
+          <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          Consultar por WhatsApp
+        </a>
+        <a
+          href="/contact/"
+          class="inline-flex items-center justify-center px-8 py-4 border-2 border-white text-white font-medium rounded-lg hover:bg-white hover:text-gray-900 transition text-lg"
+        >
+          Enviar mensaje
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Leaflet -->
+  {proyectosConUbicacion.length > 0 && (
+    <>
+      <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+      <script is:inline src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+      <script is:inline define:vars={{ proyectos: proyectosConUbicacion }}>
+        document.addEventListener('DOMContentLoaded', function () {
+          var mapEl = document.getElementById('map');
+          if (!mapEl) return;
+
+          var map = L.map('map', { scrollWheelZoom: false }).setView([-34.9467, -54.9358], 13);
+
+          L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+            maxZoom: 19,
+          }).addTo(map);
+
+          var bounds = [];
+          proyectos.forEach(function (p) {
+            var marker = L.marker([p.lat, p.lng]).addTo(map);
+
+            var imgHtml = p.image
+              ? '<img src="' + p.image + '" style="width:100%;height:120px;object-fit:cover;border-radius:8px;margin-bottom:8px;" />'
+              : '';
+
+            var popupContent = '<div style="min-width:220px;font-family:system-ui,sans-serif;">' +
+              imgHtml +
+              '<h3 style="margin:0 0 4px 0;font-size:15px;font-weight:700;">' + p.title + '</h3>' +
+              '<p style="margin:0 0 6px 0;font-size:12px;color:#6b7280;">' + p.description + '</p>';
+
+            if (p.location) {
+              popupContent += '<p style="margin:0 0 6px 0;font-size:12px;color:#9ca3af;">📍 ' + p.location + '</p>';
+            }
+
+            if (p.status) {
+              popupContent += '<span style="display:inline-block;font-size:11px;padding:2px 8px;background:#dcfce7;color:#15803d;border-radius:12px;">' + p.status + '</span><br>';
+            }
+
+            popupContent += '<a href="/desarrollos/' + p.slug + '/" style="display:inline-block;margin-top:8px;font-size:13px;color:#111827;font-weight:600;text-decoration:underline;">Ver proyecto →</a>';
+            popupContent += '</div>';
+
+            marker.bindPopup(popupContent, { maxWidth: 280 });
+            bounds.push([p.lat, p.lng]);
+          });
+
+          if (bounds.length > 1) {
+            map.fitBounds(bounds, { padding: [50, 50] });
+          }
+        });
+      </script>
+    </>
+  )}
+
+  <!-- Filtros JS -->
+  <script is:inline>
+    document.addEventListener('DOMContentLoaded', function () {
+      var filterLocation = document.getElementById('filter-location');
+      var filterStatus = document.getElementById('filter-status');
+      var cards = document.querySelectorAll('.project-card');
+      var noResults = document.getElementById('no-results');
+      var resultsCount = document.getElementById('results-count');
+      var clearFilters = document.getElementById('clear-filters');
+
+      function applyFilters() {
+        var loc = filterLocation.value;
+        var status = filterStatus.value;
+        var visible = 0;
+
+        cards.forEach(function (card) {
+          var matchLoc = !loc || card.dataset.location === loc;
+          var matchStatus = !status || card.dataset.status === status;
+          if (matchLoc && matchStatus) {
+            card.style.display = '';
+            visible++;
+          } else {
+            card.style.display = 'none';
+          }
+        });
+
+        noResults.classList.toggle('hidden', visible > 0);
+        resultsCount.textContent = visible + ' de ' + cards.length + ' proyectos';
+      }
+
+      filterLocation.addEventListener('change', applyFilters);
+      filterStatus.addEventListener('change', applyFilters);
+
+      if (clearFilters) {
+        clearFilters.addEventListener('click', function () {
+          filterLocation.value = '';
+          filterStatus.value = '';
+          applyFilters();
+        });
+      }
+
+      // Mostrar conteo inicial
+      resultsCount.textContent = cards.length + ' proyectos';
+    });
+  </script>
 </BaseLayout>
