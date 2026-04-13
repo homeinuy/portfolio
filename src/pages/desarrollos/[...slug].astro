@@ -37,99 +37,154 @@ const amenityIcons: Record<string, string> = {
   'Area infantil': '👶',
   'Bicicletas': '🚲',
   'Cargador electrico': '⚡',
+  'Piscina interior climatizada': '🏊',
+  'Spa': '💆',
+  'Fitness Center': '🏋️',
+  'Sala de juegos': '🎮',
+  'Recepcion 24hs': '🔒',
+  'Hall doble altura': '🏛️',
+  'Barbacoas y SUM piso 24': '🔥',
+  'Piscina exterior climatizada': '🏊',
+  'Cancha multiuso': '⚽',
+  'Garajes en subsuelos': '🅿️',
 };
 ---
 
-<BaseLayout title={`${desarrollo.data.title} — Agustín Díaz`} description={desarrollo.data.description}>
+<BaseLayout
+  title={`${desarrollo.data.title} — Agustín Díaz`}
+  description={desarrollo.data.description}
+  image={desarrollo.data.image}
+  type="article"
+  publishedDate={desarrollo.data.date}
+>
 
-  {/* Hero con imagen de fondo */}
-  <section class="relative bg-gray-900 text-white">
-    {desarrollo.data.image ? (
-      <div class="absolute inset-0">
-        <img src={desarrollo.data.image} alt={desarrollo.data.title} class="w-full h-full object-cover opacity-40" />
-      </div>
-    ) : (
-      <div class="absolute inset-0 bg-gradient-to-br from-gray-800 to-gray-900"></div>
-    )}
-    <div class="relative max-w-5xl mx-auto px-6 py-20">
-      <a href="/desarrollos/" class="text-sm text-gray-300 hover:text-white transition">
-        &larr; Volver a proyectos
+  {/* Navegación del proyecto */}
+  <div class="bg-white border-b border-gray-100 sticky top-0 z-40">
+    <div class="max-w-6xl mx-auto px-6 py-3 flex items-center justify-between">
+      <a href="/desarrollos/" class="text-sm text-gray-500 hover:text-gray-900 transition flex items-center gap-1">
+        <span>&larr;</span> Proyectos
       </a>
-      <h1 class="mt-6 font-serif text-5xl font-bold">{desarrollo.data.title}</h1>
-      <p class="mt-4 text-xl text-gray-200 max-w-2xl">{desarrollo.data.description}</p>
-
-      {/* Datos clave */}
-      <div class="mt-8 flex flex-wrap gap-6 text-sm">
-        {desarrollo.data.address && (
-          <div>
-            <span class="text-gray-400 block">Ubicacion</span>
-            <span class="font-medium">📍 {desarrollo.data.address}</span>
-          </div>
+      <nav class="hidden md:flex items-center gap-6 text-sm text-gray-500">
+        <a href="#proyecto" class="hover:text-gray-900 transition">El proyecto</a>
+        {desarrollo.data.amenities && desarrollo.data.amenities.length > 0 && (
+          <a href="#amenities" class="hover:text-gray-900 transition">Amenities</a>
         )}
-        {desarrollo.data.status && (
-          <div>
-            <span class="text-gray-400 block">Estado</span>
-            <span class="inline-block px-3 py-1 bg-green-500/20 text-green-300 rounded-full text-xs font-medium">
-              {desarrollo.data.status}
-            </span>
-          </div>
+        {desarrollo.data.floorPlanUrl && (
+          <a href="#planos" class="hover:text-gray-900 transition">Planos</a>
         )}
-        {desarrollo.data.deliveryDate && (
-          <div>
-            <span class="text-gray-400 block">Entrega estimada</span>
-            <span class="font-medium">{desarrollo.data.deliveryDate}</span>
-          </div>
+        {desarrollo.data.lat && desarrollo.data.lng && (
+          <a href="#ubicacion" class="hover:text-gray-900 transition">Ubicacion</a>
         )}
-        {desarrollo.data.developer && (
-          <div>
-            <span class="text-gray-400 block">Desarrollador</span>
-            <span class="font-medium">{desarrollo.data.developer}</span>
-          </div>
-        )}
-      </div>
+        <a href={`https://wa.me/${whatsappNumber}?text=${whatsappMessage}`} target="_blank" rel="noopener noreferrer" class="px-4 py-1.5 bg-green-600 text-white rounded-full hover:bg-green-500 transition font-medium">
+          Consultar
+        </a>
+      </nav>
     </div>
-  </section>
+  </div>
 
-  {/* Datos numéricos */}
-  {(desarrollo.data.floors || desarrollo.data.units || desarrollo.data.priceFrom) && (
-    <section class="bg-gray-50 border-b border-gray-100">
-      <div class="max-w-5xl mx-auto px-6 py-8 flex flex-wrap gap-8 justify-center text-center">
-        {desarrollo.data.floors && (
-          <div>
-            <span class="text-3xl font-bold text-gray-900">{desarrollo.data.floors}</span>
-            <span class="block text-sm text-gray-500 mt-1">Pisos</span>
-          </div>
-        )}
-        {desarrollo.data.units && (
-          <div>
-            <span class="text-3xl font-bold text-gray-900">{desarrollo.data.units}</span>
-            <span class="block text-sm text-gray-500 mt-1">Unidades</span>
-          </div>
-        )}
-        {desarrollo.data.priceFrom && (
-          <div>
-            <span class="text-sm text-gray-500">Desde</span>
-            <span class="block text-3xl font-bold text-gray-900">
-              {desarrollo.data.priceCurrency} {desarrollo.data.priceFrom.toLocaleString('es-UY')}
-            </span>
-          </div>
-        )}
+  {/* Hero: Imagen protagonista a ancho completo */}
+  {desarrollo.data.image && (
+    <section class="w-full">
+      <div class="max-w-6xl mx-auto px-6 pt-8">
+        <img
+          src={desarrollo.data.image}
+          alt={desarrollo.data.title}
+          class="w-full h-[500px] md:h-[600px] object-cover rounded-2xl"
+        />
       </div>
     </section>
   )}
 
+  {/* Titulo y datos del proyecto */}
+  <section class="py-12 md:py-16 px-6">
+    <div class="max-w-6xl mx-auto">
+      <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-8">
+        {/* Izquierda: titulo y descripcion */}
+        <div class="md:max-w-2xl">
+          {desarrollo.data.status && (
+            <span class="inline-block px-3 py-1 bg-green-50 text-green-700 rounded-full text-xs font-semibold tracking-wide uppercase mb-4">
+              {desarrollo.data.status}
+            </span>
+          )}
+          <h1 class="font-serif text-4xl md:text-6xl font-bold text-gray-900 leading-tight">
+            {desarrollo.data.title}
+          </h1>
+          <p class="mt-4 text-xl text-gray-500 leading-relaxed">
+            {desarrollo.data.description}
+          </p>
+          {desarrollo.data.address && (
+            <p class="mt-4 text-gray-400 flex items-center gap-2">
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+              {desarrollo.data.address}
+            </p>
+          )}
+        </div>
+
+        {/* Derecha: datos clave en tarjeta */}
+        <div class="bg-gray-50 rounded-2xl p-8 md:min-w-[320px]">
+          <div class="space-y-5">
+            {desarrollo.data.priceFrom && (
+              <div>
+                <span class="text-xs text-gray-400 uppercase tracking-wider">Desde</span>
+                <p class="text-3xl font-bold text-gray-900 mt-1">
+                  {desarrollo.data.priceCurrency} {desarrollo.data.priceFrom.toLocaleString('es-UY')}
+                </p>
+              </div>
+            )}
+            <div class="h-px bg-gray-200"></div>
+            <div class="grid grid-cols-2 gap-4">
+              {desarrollo.data.floors && (
+                <div>
+                  <span class="text-xs text-gray-400 uppercase tracking-wider">Pisos</span>
+                  <p class="text-xl font-bold text-gray-900 mt-1">{desarrollo.data.floors}</p>
+                </div>
+              )}
+              {desarrollo.data.units > 0 && (
+                <div>
+                  <span class="text-xs text-gray-400 uppercase tracking-wider">Unidades</span>
+                  <p class="text-xl font-bold text-gray-900 mt-1">{desarrollo.data.units}</p>
+                </div>
+              )}
+              {desarrollo.data.deliveryDate && (
+                <div>
+                  <span class="text-xs text-gray-400 uppercase tracking-wider">Entrega</span>
+                  <p class="text-sm font-semibold text-gray-900 mt-1">{desarrollo.data.deliveryDate}</p>
+                </div>
+              )}
+              {desarrollo.data.developer && (
+                <div>
+                  <span class="text-xs text-gray-400 uppercase tracking-wider">Desarrollador</span>
+                  <p class="text-sm font-semibold text-gray-900 mt-1">{desarrollo.data.developer}</p>
+                </div>
+              )}
+            </div>
+            <div class="h-px bg-gray-200"></div>
+            <a
+              href={`https://wa.me/${whatsappNumber}?text=${whatsappMessage}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="flex items-center justify-center gap-2 w-full py-3 bg-green-600 text-white font-medium rounded-xl hover:bg-green-500 transition"
+            >
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+              Consultar por WhatsApp
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   {/* Galería de imágenes */}
   {desarrollo.data.gallery && desarrollo.data.gallery.length > 0 && (
     <section class="py-12 px-6">
-      <div class="max-w-5xl mx-auto">
-        <h2 class="font-serif text-2xl font-bold text-gray-900 mb-6">Galeria</h2>
+      <div class="max-w-6xl mx-auto">
         <div class="grid gap-3 grid-cols-2 md:grid-cols-3">
           {desarrollo.data.gallery.map((img: string, i: number) => (
             <img
               src={img}
               alt={`${desarrollo.data.title} - Imagen ${i + 1}`}
               class:list={[
-                'w-full object-cover rounded-lg',
+                'w-full object-cover rounded-xl',
                 i === 0 ? 'col-span-2 h-72' : 'h-48',
               ]}
             />
@@ -139,12 +194,11 @@ const amenityIcons: Record<string, string> = {
     </section>
   )}
 
-  {/* Video de YouTube */}
+  {/* Video de YouTube — protagonista */}
   {desarrollo.data.youtubeId && (
-    <section class="py-12 px-6 bg-gray-50">
-      <div class="max-w-4xl mx-auto">
-        <h2 class="font-serif text-2xl font-bold text-gray-900 mb-6">Video del proyecto</h2>
-        <div class="aspect-video rounded-lg overflow-hidden shadow-lg">
+    <section class="py-16 px-6">
+      <div class="max-w-5xl mx-auto">
+        <div class="aspect-video rounded-2xl overflow-hidden shadow-lg">
           <iframe
             width="100%"
             height="100%"
@@ -160,11 +214,11 @@ const amenityIcons: Record<string, string> = {
     </section>
   )}
 
-  {/* Descripción del proyecto */}
-  <section class="py-12 px-6">
+  {/* Sobre el proyecto */}
+  <section id="proyecto" class="py-16 px-6">
     <div class="max-w-3xl mx-auto">
-      <h2 class="font-serif text-2xl font-bold text-gray-900 mb-6">Sobre el proyecto</h2>
-      <div class="prose prose-gray max-w-none prose-lg">
+      <h2 class="font-serif text-3xl font-bold text-gray-900 mb-8">Sobre el proyecto</h2>
+      <div class="prose prose-gray max-w-none prose-lg prose-headings:font-serif">
         <Content />
       </div>
     </div>
@@ -172,12 +226,21 @@ const amenityIcons: Record<string, string> = {
 
   {/* Amenities */}
   {desarrollo.data.amenities && desarrollo.data.amenities.length > 0 && (
-    <section class="py-12 px-6 bg-gray-50">
-      <div class="max-w-5xl mx-auto">
-        <h2 class="font-serif text-2xl font-bold text-gray-900 mb-6">Amenities</h2>
+    <section id="amenities" class="py-16 px-6 bg-gray-50">
+      <div class="max-w-6xl mx-auto">
+        <h2 class="font-serif text-3xl font-bold text-gray-900 mb-4">Amenities</h2>
+        <p class="text-gray-500 text-lg mb-10">Una propuesta completa para cada forma de vivir</p>
+
+        {/* Imagen de amenities */}
+        {desarrollo.data.amenitiesImage && (
+          <div class="mb-10">
+            <img src={desarrollo.data.amenitiesImage} alt={`Amenities — ${desarrollo.data.title}`} class="w-full rounded-2xl" />
+          </div>
+        )}
+
         <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
           {desarrollo.data.amenities.map((amenity: string) => (
-            <div class="flex items-center gap-3 bg-white rounded-lg p-4 border border-gray-100">
+            <div class="flex items-center gap-3 bg-white rounded-xl p-4 border border-gray-100">
               <span class="text-2xl">{amenityIcons[amenity] || '✨'}</span>
               <span class="text-sm font-medium text-gray-700">{amenity}</span>
             </div>
@@ -187,21 +250,48 @@ const amenityIcons: Record<string, string> = {
     </section>
   )}
 
+  {/* Planos interactivos */}
+  {desarrollo.data.floorPlanUrl && (
+    <section id="planos" class="py-16 px-6">
+      <div class="max-w-5xl mx-auto">
+        <h2 class="font-serif text-3xl font-bold text-gray-900 mb-8">Planos interactivos</h2>
+        <div class="rounded-2xl overflow-hidden border border-gray-200 shadow-sm bg-white">
+          <iframe
+            src={desarrollo.data.floorPlanUrl}
+            width="100%"
+            height="600"
+            frameborder="0"
+            allow="fullscreen"
+            loading="lazy"
+            title={`Planos Interactivos — ${desarrollo.data.title}`}
+            class="w-full"
+          ></iframe>
+        </div>
+      </div>
+    </section>
+  )}
+
   {/* Mapa de ubicación */}
   {desarrollo.data.lat && desarrollo.data.lng && (
-    <section class="py-12 px-6">
-      <div class="max-w-5xl mx-auto">
-        <h2 class="font-serif text-2xl font-bold text-gray-900 mb-6">Ubicacion</h2>
-        <div id="project-map" class="w-full h-[400px] rounded-lg border border-gray-200 shadow-sm"></div>
+    <section id="ubicacion" class="py-16 px-6">
+      <div class="max-w-6xl mx-auto">
+        <h2 class="font-serif text-3xl font-bold text-gray-900 mb-4">Ubicacion</h2>
+        {desarrollo.data.address && (
+          <p class="text-gray-500 text-lg mb-8 flex items-center gap-2">
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+            {desarrollo.data.address}
+          </p>
+        )}
+        <div id="project-map" class="w-full h-[450px] rounded-2xl border border-gray-200 shadow-sm"></div>
       </div>
     </section>
   )}
 
   {/* CTA de contacto + WhatsApp */}
-  <section class="py-16 px-6 bg-gray-900 text-white">
+  <section class="py-20 px-6 bg-gray-900 text-white">
     <div class="max-w-3xl mx-auto text-center">
       <img src="/images/homein.png" alt="Homein" class="h-8 mx-auto mb-6" />
-      <h2 class="font-serif text-3xl font-bold">¿Te interesa {desarrollo.data.title}?</h2>
+      <h2 class="font-serif text-4xl font-bold">¿Te interesa {desarrollo.data.title}?</h2>
       <p class="mt-4 text-gray-300 text-lg">
         Contactame para recibir mas informacion, precios actualizados y disponibilidad de unidades.
       </p>
@@ -210,14 +300,14 @@ const amenityIcons: Record<string, string> = {
           href={`https://wa.me/${whatsappNumber}?text=${whatsappMessage}`}
           target="_blank"
           rel="noopener noreferrer"
-          class="inline-flex items-center justify-center gap-2 px-8 py-4 bg-green-600 text-white font-medium rounded-lg hover:bg-green-500 transition text-lg"
+          class="inline-flex items-center justify-center gap-2 px-8 py-4 bg-green-600 text-white font-medium rounded-xl hover:bg-green-500 transition text-lg"
         >
           <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
           Consultar por WhatsApp
         </a>
         <a
           href="/contact/"
-          class="inline-flex items-center justify-center px-8 py-4 border-2 border-white text-white font-medium rounded-lg hover:bg-white hover:text-gray-900 transition text-lg"
+          class="inline-flex items-center justify-center px-8 py-4 border-2 border-white text-white font-medium rounded-xl hover:bg-white hover:text-gray-900 transition text-lg"
         >
           Enviar mensaje
         </a>
@@ -228,17 +318,17 @@ const amenityIcons: Record<string, string> = {
   {/* Proyectos similares */}
   {similares.length > 0 && (
     <section class="py-16 px-6">
-      <div class="max-w-5xl mx-auto">
-        <h2 class="font-serif text-2xl font-bold text-gray-900 mb-8">Otros proyectos</h2>
+      <div class="max-w-6xl mx-auto">
+        <h2 class="font-serif text-3xl font-bold text-gray-900 mb-8">Otros proyectos</h2>
         <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {similares.map((d) => (
-            <a href={`/desarrollos/${d.id}/`} class="group block border border-gray-100 rounded-lg overflow-hidden hover:border-gray-300 transition">
+            <a href={`/desarrollos/${d.id}/`} class="group block border border-gray-100 rounded-xl overflow-hidden hover:border-gray-300 hover:shadow-md transition">
               {d.data.image && (
-                <img src={d.data.image} alt={d.data.title} class="w-full h-40 object-cover" />
+                <img src={d.data.image} alt={d.data.title} class="w-full h-48 object-cover" />
               )}
               <div class="p-5">
                 {d.data.status && (
-                  <span class="text-xs px-2 py-1 bg-green-100 text-green-700 rounded-full font-medium">
+                  <span class="text-xs px-2 py-1 bg-green-50 text-green-700 rounded-full font-medium">
                     {d.data.status}
                   </span>
                 )}
@@ -246,7 +336,10 @@ const amenityIcons: Record<string, string> = {
                   {d.data.title}
                 </h3>
                 {d.data.location && (
-                  <p class="mt-1 text-xs text-gray-400">📍 {d.data.location}</p>
+                  <p class="mt-1 text-xs text-gray-400 flex items-center gap-1">
+                    <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                    {d.data.location}
+                  </p>
                 )}
                 {d.data.priceFrom && (
                   <p class="mt-2 text-sm font-semibold text-gray-900">
@@ -266,7 +359,7 @@ const amenityIcons: Record<string, string> = {
     <>
       <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
       <script is:inline src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-      <script is:inline define:vars={{ lat: desarrollo.data.lat, lng: desarrollo.data.lng, title: desarrollo.data.title }}>
+      <script is:inline define:vars={{ lat: desarrollo.data.lat, lng: desarrollo.data.lng, title: desarrollo.data.title, pois: desarrollo.data.pointsOfInterest || [] }}>
         document.addEventListener('DOMContentLoaded', function () {
           var mapEl = document.getElementById('project-map');
           if (!mapEl) return;
@@ -276,7 +369,57 @@ const amenityIcons: Record<string, string> = {
             maxZoom: 20,
             subdomains: 'abcd',
           }).addTo(map);
-          L.marker([lat, lng]).addTo(map).bindPopup('<strong>' + title + '</strong>').openPopup();
+
+          var projectIcon = L.divIcon({
+            html: '<div style="background:#1e3a5f;width:32px;height:32px;border-radius:50%;border:3px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.3);display:flex;align-items:center;justify-content:center;"><span style="color:white;font-size:16px;">🏗️</span></div>',
+            iconSize: [32, 32],
+            iconAnchor: [16, 16],
+            popupAnchor: [0, -20],
+            className: '',
+          });
+          L.marker([lat, lng], { icon: projectIcon }).addTo(map).bindPopup('<strong style="font-size:15px;">' + title + '</strong><br><span style="color:#6b7280;font-size:12px;">Proyecto</span>').openPopup();
+
+          var poiEmojis = {
+            'playa': '🏖️',
+            'restaurante': '🍽️',
+            'shopping': '🛍️',
+            'salud': '🏥',
+            'educacion': '🎓',
+            'transporte': '🚌',
+            'entretenimiento': '🎭',
+            'otro': '📍'
+          };
+
+          var poiColors = {
+            'playa': '#0ea5e9',
+            'restaurante': '#f97316',
+            'shopping': '#a855f7',
+            'salud': '#ef4444',
+            'educacion': '#22c55e',
+            'transporte': '#6366f1',
+            'entretenimiento': '#ec4899',
+            'otro': '#6b7280'
+          };
+
+          var bounds = [[lat, lng]];
+          pois.forEach(function (poi) {
+            var emoji = poiEmojis[poi.type] || '📍';
+            var color = poiColors[poi.type] || '#6b7280';
+            var poiIcon = L.divIcon({
+              html: '<div style="background:white;width:28px;height:28px;border-radius:50%;border:2px solid ' + color + ';box-shadow:0 1px 4px rgba(0,0,0,0.2);display:flex;align-items:center;justify-content:center;"><span style="font-size:14px;">' + emoji + '</span></div>',
+              iconSize: [28, 28],
+              iconAnchor: [14, 14],
+              popupAnchor: [0, -16],
+              className: '',
+            });
+            L.marker([poi.lat, poi.lng], { icon: poiIcon }).addTo(map)
+              .bindPopup('<strong style="font-size:13px;">' + poi.name + '</strong><br><span style="color:' + color + ';font-size:11px;text-transform:capitalize;">' + emoji + ' ' + poi.type + '</span>');
+            bounds.push([poi.lat, poi.lng]);
+          });
+
+          if (pois.length > 0) {
+            map.fitBounds(bounds, { padding: [40, 40], maxZoom: 15 });
+          }
         });
       </script>
     </>

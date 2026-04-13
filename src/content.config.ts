@@ -45,9 +45,17 @@ const desarrollos = defineCollection({
     priceFrom: z.number().optional(),
     priceCurrency: z.string().default('USD'),
     amenities: z.array(z.string()).optional(),
+    amenitiesImage: z.string().optional(),
     youtubeId: z.string().optional(),
+    floorPlanUrl: z.string().optional(),
     lat: z.number().optional(),
     lng: z.number().optional(),
+    pointsOfInterest: z.array(z.object({
+      name: z.string(),
+      type: z.enum(['playa', 'restaurante', 'shopping', 'salud', 'educacion', 'transporte', 'entretenimiento', 'otro']),
+      lat: z.number(),
+      lng: z.number(),
+    })).optional(),
     featured: z.boolean().default(false),
   }),
 });

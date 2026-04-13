@@ -23,8 +23,30 @@ amenities:
   - Estacionamiento
   - Seguridad 24hs
 youtubeId: "dQw4w9WgXcQ"
+floorPlanUrl: "https://planos-interactivos.netlify.app/"
 lat: -34.9467
 lng: -54.9358
+pointsOfInterest:
+  - name: "Playa Brava"
+    type: "playa"
+    lat: -34.9480
+    lng: -54.9340
+  - name: "Playa Mansa"
+    type: "playa"
+    lat: -34.9450
+    lng: -54.9420
+  - name: "Punta Shopping"
+    type: "shopping"
+    lat: -34.9290
+    lng: -54.9180
+  - name: "Hospital Cantegril"
+    type: "salud"
+    lat: -34.9350
+    lng: -54.9280
+  - name: "Shopping Atlantico"
+    type: "shopping"
+    lat: -34.9365
+    lng: -54.9395
 featured: true
 ---
 
